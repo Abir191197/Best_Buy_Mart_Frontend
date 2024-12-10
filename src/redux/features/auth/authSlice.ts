@@ -4,8 +4,7 @@ import { ReactNode } from "react";
 
 export type TUser = {
 
-  status: ReactNode;
-  id: ReactNode;
+ 
   userId: ReactNode;
   name: ReactNode;
   email: string;
@@ -46,5 +45,5 @@ export const { setUser, logout } = authSlice.actions;
 
 export default authSlice.reducer;
 
-export const useCurrentToken = (state: RootState) => state.auth.token;
+export const useCurrentToken = (state: RootState) => (state.auth as TAuthState).token;
 export const selectCurrentUser = (state: RootState) => state.auth.user;

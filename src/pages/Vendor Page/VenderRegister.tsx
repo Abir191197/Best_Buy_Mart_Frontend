@@ -2,8 +2,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import reqApi from "../redux/features/auth/regApi";
 import { toast } from "sonner";
+import reqApi from "../../redux/features/auth/regApi";
 
 interface RegisterFormInputs {
   name: string;
@@ -11,28 +11,28 @@ interface RegisterFormInputs {
   password: string;
 }
 
-export default function Register() {
+export default function VendorRegister() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormInputs>();
-  const [registerUser, { isLoading }] = reqApi.useRegisterMutation();
+  const [registerVendor, { isLoading }] = reqApi.useRegisterMutation();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit = async (data: RegisterFormInputs) => {
-    const userInfo = {
+    const vendorInfo = {
       name: data.name,
       email: data.email,
       password: data.password,
-      role: "USER",
+      role: "VENDOR", // Vendor role explicitly defined
     };
 
     try {
-      const response = await registerUser(userInfo).unwrap();
-      toast.success("Registration successful!");
-      navigate("/OTPVerification", { state: { email: userInfo.email } }); // Pass email to OTP component
+      const response = await registerVendor(vendorInfo).unwrap();
+      toast.success("Vendor registration successful!");
+      navigate("/OTPVerification", { state: { email: vendorInfo.email } }); // Pass email to OTP component
     } catch (error: any) {
       toast.error(
         "Registration failed: " + (error?.data?.message || "Unknown error")
@@ -46,7 +46,7 @@ export default function Register() {
         <div className="p-8 bg-white shadow-lg rounded-xl">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
           <p className="text-indigo-600 mt-4 text-center">
-            Processing your registration...
+            Processing your vendor registration...
           </p>
         </div>
       </div>
@@ -58,10 +58,10 @@ export default function Register() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl rounded-xl sm:px-10">
           <h2 className="text-3xl font-extrabold text-gray-900 text-center">
-            Create Your Account
+            Vendor Registration
           </h2>
           <p className="mt-2 text-sm text-gray-600 text-center">
-            Join us and enhance your learning journey
+            Register as a vendor and start offering your products or services.
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
@@ -70,13 +70,13 @@ export default function Register() {
               <label
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700">
-                Full Name
+                Business Name
               </label>
               <input
                 type="text"
                 id="name"
                 {...register("name", {
-                  required: "Name is required",
+                  required: "Business name is required",
                   minLength: {
                     value: 2,
                     message: "Name must be at least 2 characters",
@@ -87,7 +87,7 @@ export default function Register() {
                     ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                     : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                 } text-sm`}
-                placeholder="Enter your full name"
+                placeholder="Enter your business name"
               />
               {errors.name && (
                 <p className="mt-1 text-xs text-red-500">
@@ -101,7 +101,7 @@ export default function Register() {
               <label
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700">
-                Email Address
+                Business Email Address
               </label>
               <input
                 type="email"
@@ -181,7 +181,7 @@ export default function Register() {
               <button
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Create Account
+                Register as Vendor
               </button>
             </div>
 

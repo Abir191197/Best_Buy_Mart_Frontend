@@ -15,12 +15,14 @@ import Vendor from "../pages/Vendor Page/Vendor";
 import { customerPath } from "./customer.route";
 import { vendorPaths } from "./vendor.route";
 import NotFoundPage from "../components/NotFoundPage";
+import OTPVerification from "../pages/OtpVerification";
+import VendorRegister from "../pages/Vendor Page/VenderRegister";
 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element:<h1>home</h1>,
+    element: <h1>home</h1>,
     errorElement: <NotFoundPage></NotFoundPage>,
   },
   {
@@ -31,7 +33,17 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register></Register>,
-    //errorElement: <Nofound></Nofound>,
+    errorElement: <NotFoundPage></NotFoundPage>,
+  },
+  {
+    path: "/OTPVerification",
+    element: <OTPVerification></OTPVerification>,
+    errorElement: <NotFoundPage></NotFoundPage>,
+  },
+  {
+    path: "/VendorRegister",
+    element: <VendorRegister></VendorRegister>,
+    errorElement: <NotFoundPage></NotFoundPage>,
   },
 
   {
@@ -64,7 +76,6 @@ const router = createBrowserRouter([
       <ProtectedRoute role="vendor">
         <Vendor></Vendor>
       </ProtectedRoute>
-
     ),
 
     children: vendorPaths,
