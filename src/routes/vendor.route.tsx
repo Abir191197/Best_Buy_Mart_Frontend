@@ -1,12 +1,17 @@
-import Vendor from "../pages/Vendor Page/Vendor";
+
+import MyShopLayout from "../pages/Vendor Page/MyShopLayout";
+
+
+import VendorHome from "../pages/Vendor Page/VendorHome";
+
 
 export const vendorPaths = [
   {
     index: true,
-    element: <Vendor></Vendor>,
+    element: <VendorHome />,
   },
   {
-    path: "dashboard",
-    element: <Vendor></Vendor>,
+    path: "MyShop",
+    element: <MyShopLayout />,
   },
 ];

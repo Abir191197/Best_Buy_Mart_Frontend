@@ -1,10 +1,14 @@
 
+import { Outlet } from "react-router-dom";
+import VendorDashboard from "./VendorDashboard";
+
 
 const Vendor = () => {
     return (
-        <div className="  ">
-           This is Vendor Page
-        </div>
+      <div className="  ">
+        <VendorDashboard></VendorDashboard>
+        <Outlet></Outlet>
+      </div>
     );
 };
 

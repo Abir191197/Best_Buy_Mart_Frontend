@@ -1,23 +1,23 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import Login from "../pages/Login";
-import Register from "../pages/Register";
+
 
 import { adminPaths } from "./admin.route";
 
-
-
 import ProtectedRoute from "../components/ProtectedRoute";
 
+import NotFoundPage from "../components/NotFoundPage";
 import Admin from "../pages/Admin Page/Admin";
 import Customer from "../pages/Customer Page/Customer";
+
+import VendorRegister from "../pages/Auth Page/VenderRegister";
+
 import Vendor from "../pages/Vendor Page/Vendor";
 import { customerPath } from "./customer.route";
 import { vendorPaths } from "./vendor.route";
-import NotFoundPage from "../components/NotFoundPage";
-import OTPVerification from "../pages/OtpVerification";
-import VendorRegister from "../pages/Vendor Page/VenderRegister";
-
+import OTPVerification from "../pages/Auth Page/OtpVerification";
+import Register from "../pages/Auth Page/Register";
+import Login from "../pages/Auth Page/Login";
 
 const router = createBrowserRouter([
   {
@@ -49,19 +49,19 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute role="admin">
+      <ProtectedRoute role="ADMIN">
         <Admin></Admin>
       </ProtectedRoute>
     ),
     children: adminPaths,
-    //errorElement: <Nofound></Nofound>,
+    errorElement: <NotFoundPage></NotFoundPage>,
   },
 
   {
-    path: "/customer",
+    path: "/user",
 
     element: (
-      <ProtectedRoute role="customer">
+      <ProtectedRoute role="USER">
         <Customer></Customer>
       </ProtectedRoute>
     ),
@@ -73,7 +73,7 @@ const router = createBrowserRouter([
     path: "/vendor",
 
     element: (
-      <ProtectedRoute role="vendor">
+      <ProtectedRoute role="VENDOR">
         <Vendor></Vendor>
       </ProtectedRoute>
     ),

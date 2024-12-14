@@ -1,12 +1,12 @@
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import authApi from "../redux/features/auth/authApi";
-import { setUser, TUser } from "../redux/features/auth/authSlice";
-import { useAppDispatch } from "../redux/hook";
-import { verifyToken } from "../utils/verifyToken";
+import authApi from "../../redux/features/auth/authApi";
+import { setUser, TUser } from "../../redux/features/auth/authSlice";
+import { useAppDispatch } from "../../redux/hook";
+import { verifyToken } from "../../utils/verifyToken";
 
 interface LoginFormInputs {
   email: string;

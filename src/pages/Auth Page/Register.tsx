@@ -2,8 +2,9 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import reqApi from "../redux/features/auth/regApi";
+
 import { toast } from "sonner";
+import reqApi from "../../redux/features/auth/regApi";
 
 interface RegisterFormInputs {
   name: string;

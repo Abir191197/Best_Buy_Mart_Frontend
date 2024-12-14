@@ -1,9 +1,10 @@
 import { useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import otpApi from "../redux/features/auth/otpApi";
-import { verifyToken } from "../utils/verifyToken";
+
 import {  useNavigate } from "react-router-dom";
+import { verifyToken } from "../../utils/verifyToken";
+import otpApi from "../../redux/features/auth/otpApi";
 interface OTPFormInputs {
   otp: string;
 }
