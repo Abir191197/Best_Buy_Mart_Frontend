@@ -7,6 +7,6 @@ export const theme = {
   extend: {},
 };
 export const plugins = [
-  // // eslint-disable-next-line no-undef
-  // require('@tailwindcss/forms'), // Correct import syntax
+  // eslint-disable-next-line no-undef
+  require('@tailwindcss/forms'), // Correct import syntax
 ];
