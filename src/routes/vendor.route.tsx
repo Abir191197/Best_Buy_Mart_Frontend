@@ -21,7 +21,7 @@ export const vendorPaths = [
     element: <ProductsLayout />,
   },
   {
-    path: "Products/:id",
+    path: "Product/:ProductId",
     element: <SingleProductView />,
   },
 ];

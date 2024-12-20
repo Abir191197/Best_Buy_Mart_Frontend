@@ -9,7 +9,7 @@ const VendorShopApi = baseApi.injectEndpoints({
         method: "POST",
         body: formData,
       }),
-      invalidatesTags: ["Create Shop"], // Invalidate relevant cache on success
+      invalidatesTags: ["MyShop"], // Invalidate relevant cache on success
     }),
 
     // Query to fetch a user's shop by ID
@@ -18,7 +18,7 @@ const VendorShopApi = baseApi.injectEndpoints({
         url: `/shop/getMyShop/${id}`, // Backend endpoint to get a shop by ID
         method: "GET",
       }),
-      providesTags: ["Create Shop"], // Tag for caching this response
+      providesTags: ["MyShop"], // Tag for caching this response
     }),
   }),
 });

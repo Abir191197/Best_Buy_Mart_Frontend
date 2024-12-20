@@ -2,14 +2,14 @@ import { baseApi } from "../../api/baseApi";
 
 const VendorProductCreateApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Mutation to create a shop
+    // Mutation to create a product
     createProduct: builder.mutation({
       query: (formData) => ({
         url: "/product/createProduct", // Ensure this URL matches your backend endpoint
         method: "POST",
         body: formData,
       }),
-      invalidatesTags: ["Create Shop"], // Invalidate relevant cache on success
+      invalidatesTags: ["MyShop", "Products"], // Invalidate cache on success
     }),
 
     // Query to fetch a user's shop by ID
@@ -18,9 +18,47 @@ const VendorProductCreateApi = baseApi.injectEndpoints({
         url: `/shop/getMyShop/${id}`, // Backend endpoint to get a shop by ID
         method: "GET",
       }),
-      providesTags: [], // Tag for caching this response
+      providesTags: ["MyShop"], // Cache tag for shop
+    }),
+
+    // Query to fetch all products with a search term and sorting
+    getAllProductWithSearch: builder.query({
+      query: ({
+        searchTerm,
+        skip = 0,
+        limit = 10,
+        sort = "newest",
+        fields,
+      }) => {
+        // Map sort options to the backend-compatible sorting criteria
+        let sortCriteria;
+        if (sort === "price_asc") {
+          sortCriteria = { price: "asc" };
+        } else if (sort === "price_desc") {
+          sortCriteria = { price: "desc" };
+        } else if (sort === "newest") {
+          sortCriteria = { createdAt: "desc" }; // Assuming `createdAt` is the field for newest products
+        }
+
+        return {
+          url: `/product/allProducts/`, // Correct interpolation for all products endpoint
+          method: "GET",
+          params: {
+            searchTerm,
+            skip,
+            limit,
+            sort: JSON.stringify(sortCriteria),
+            fields: fields ? fields.join(",") : undefined,
+          },
+        };
+      },
+      providesTags: ["Products"], // Cache tag for products
     }),
   }),
 });
 
-export const { useCreateProductMutation, useGetMyShopQuery } = VendorProductCreateApi;
+export const {
+  useCreateProductMutation,
+  useGetMyShopQuery,
+  useGetAllProductWithSearchQuery,
+} = VendorProductCreateApi;
