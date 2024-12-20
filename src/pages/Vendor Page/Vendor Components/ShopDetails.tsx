@@ -1,8 +1,13 @@
 import { ExclamationCircleIcon, PlusIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { ShopStatus, ShopT } from "../../../Types/interface";
 import CreateShopModal from "./CreateShopModal";
+import { useGetMyShopQuery } from "../../../redux/features/Vendor Management/VendorShop";
+import { useAppSelector } from "../../../redux/hook";
+import { selectCurrentUser } from "../../../redux/features/auth/authSlice";
+import Loading from "../../../components/Loading";
+
 
 
 interface Order {
@@ -46,6 +51,7 @@ const StatusBadge = ({ status }: { status: ShopStatus }) => (
 );
 
 // Shop Card Component
+// ShopCard Component
 const ShopCard = ({ shop, orders }: { shop: ShopT; orders: Order[] }) => {
   const isManageable = shop.status === "ACTIVE";
 
@@ -65,6 +71,12 @@ const ShopCard = ({ shop, orders }: { shop: ShopT; orders: Order[] }) => {
 
       <p className="text-gray-600 text-sm mb-4">{shop.description}</p>
 
+      {/* Total Products and Total Orders */}
+      <div className="mb-4 text-sm text-gray-700 space-y-1">
+        <p>Total Products: <span className="font-medium">{shop.products?.length || 0}</span></p>
+        <p>Total Orders: <span className="font-medium">{orders?.length || 0}</span></p>
+      </div>
+
       <div className="border-t pt-4">
         <div className="flex justify-between items-center mb-4">
           <h4 className="text-sm font-medium text-gray-900">Recent Orders</h4>
@@ -80,7 +92,8 @@ const ShopCard = ({ shop, orders }: { shop: ShopT; orders: Order[] }) => {
               isManageable
                 ? "bg-blue-600 text-white hover:bg-blue-700"
                 : "bg-gray-100 text-gray-400 cursor-not-allowed"
-            )}>
+            )}
+          >
             Manage Shop
           </button>
         </div>
@@ -103,56 +116,34 @@ const ShopCard = ({ shop, orders }: { shop: ShopT; orders: Order[] }) => {
   );
 };
 
+
 // Main ShopDetails Component
 const ShopDetails = () => {
-  const [shops, setShops] = useState<ShopT[]>([]);
+  const currentUser = useAppSelector(selectCurrentUser);
+  const userId = currentUser?.userId || null;
+
+  // Fetching shops from the API
+  const { data, isLoading, isError } = useGetMyShopQuery(userId);
+
   const [orders] = useState<Order[]>([
     { id: "1", status: "Order #1 - Pending" },
     { id: "2", status: "Order #2 - Delivered" },
   ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    // Simulate API Call
-    const fetchedShops: ShopT[] = [
-      {
-        shopId: "1",
-        name: "Pusti Limited",
-        description: "Food and beverages",
-        status: "ACTIVE",
-        logoImgPath: "https://via.placeholder.com/150",
-      },
-      {
-        shopId: "2",
-        name: "Pran Limited",
-        description: "Groceries and more",
-        status: "PENDING",
-        logoImgPath: "https://via.placeholder.com/150",
-      },
-      {
-        shopId: "3",
-        name: "Fresh Limited",
-        description: "Fresh produce and meats",
-        status: "INACTIVE",
-        logoImgPath: "https://via.placeholder.com/150",
-      },
-    ];
-    setShops(fetchedShops);
-  }, []);
-
   const handleCreateShop = (newShopData: {
     productName: string;
     category: string;
   }) => {
-    const newShop: ShopT = {
-      shopId: (shops.length + 1).toString(),
-      name: newShopData.productName,
-      description: newShopData.category,
-      status: "PENDING",
-      logoImgPath: "https://via.placeholder.com/150",
-    };
-    setShops([...shops, newShop]);
+    alert(`Shop ${newShopData.productName} created successfully!`);
   };
+
+  if (isLoading)
+    return <div><Loading></Loading></div>;
+  if (isError)
+    return <p className="text-center text-red-500">Error fetching shops</p>;
+
+  const shops = data?.data || []; // Extract shops from API response
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -191,12 +182,14 @@ const ShopDetails = () => {
         </div>
       </div>
 
+      {/* Display Shop Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {shops.map((shop) => (
+        {shops.map((shop: ShopT) => (
           <ShopCard key={shop.shopId} shop={shop} orders={orders} />
         ))}
       </div>
 
+      {/* Create Shop Modal */}
       <CreateShopModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -206,5 +199,6 @@ const ShopDetails = () => {
     </div>
   );
 };
+
 
 export default ShopDetails;

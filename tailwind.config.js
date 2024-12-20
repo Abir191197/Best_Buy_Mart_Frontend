@@ -1,3 +1,6 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 /** @type {import('tailwindcss').Config} */
 export const content = [
   "./index.html",
@@ -7,6 +10,7 @@ export const theme = {
   extend: {},
 };
 export const plugins = [
-  // eslint-disable-next-line no-undef
-  require('@tailwindcss/forms'), // Correct import syntax
+  require('@tailwindcss/forms'),
+  require('@tailwindcss/aspect-ratio'),
+  require('@tailwindcss/typography'),
 ];

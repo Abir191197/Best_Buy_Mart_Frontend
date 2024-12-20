@@ -1,11 +1,11 @@
 import { baseApi } from "../../api/baseApi";
 
-const VendorShopApi = baseApi.injectEndpoints({
+const VendorProductCreateApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Mutation to create a shop
-    createShop: builder.mutation({
+    createProduct: builder.mutation({
       query: (formData) => ({
-        url: "/shop/createShop", // Ensure this URL matches your backend endpoint
+        url: "/product/createProduct", // Ensure this URL matches your backend endpoint
         method: "POST",
         body: formData,
       }),
@@ -18,9 +18,9 @@ const VendorShopApi = baseApi.injectEndpoints({
         url: `/shop/getMyShop/${id}`, // Backend endpoint to get a shop by ID
         method: "GET",
       }),
-      providesTags: ["Create Shop"], // Tag for caching this response
+      providesTags: [], // Tag for caching this response
     }),
   }),
 });
 
-export const { useCreateShopMutation, useGetMyShopQuery } = VendorShopApi;
+export const { useCreateProductMutation, useGetMyShopQuery } = VendorProductCreateApi;

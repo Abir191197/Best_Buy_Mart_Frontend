@@ -20,7 +20,7 @@ const navigation = [
   { name: "My Shop", href: "/vendor/MyShop", icon: UsersIcon, current: false },
   {
     name: "Products",
-    href: "/vendor/MyProducts",
+    href: "/vendor/Products",
     icon: FolderIcon,
     current: false,
   },

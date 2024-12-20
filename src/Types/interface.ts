@@ -23,3 +23,10 @@ export interface CreateShopModalProps {
   onSubmit: (data: any) => void;
   shopLimitReached: boolean;
 }
+
+export interface CreateProductModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (newProduct: any) => void;
+  shops: any[]; // Adjust based on the data structure you're passing
+}

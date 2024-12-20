@@ -14,6 +14,8 @@
     "@headlessui/tailwindcss": "^0.2.1",
     "@heroicons/react": "^2.1.4",
     "@reduxjs/toolkit": "^2.2.6",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/typography": "^0.5.15",
     "@tiptap/react": "^2.8.0",
     "@tiptap/starter-kit": "^2.8.0",
     "@types/dompurify": "^3.0.5",
