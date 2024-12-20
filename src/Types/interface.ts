@@ -10,7 +10,6 @@ export interface ShopT {
   logoImgPath: string;
 }
 
-
 export interface FormInputs {
   name: string;
   description: string;
@@ -29,4 +28,18 @@ export interface CreateProductModalProps {
   onClose: () => void;
   onSubmit: (newProduct: any) => void;
   shops: any[]; // Adjust based on the data structure you're passing
+}
+
+// Assuming other related models (Category, Shop, etc.) are also defined as TypeScript interfaces
+
+export interface Product {
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  shopId: string; // Unique field, used to reference Shop
+  category: string; // Unique field, used to reference Category
+
+  discountCode?: string; // Optional field
+  discountPercent?: number; // Optional field
 }

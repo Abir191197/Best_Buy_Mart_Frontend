@@ -1,15 +1,22 @@
-import React, { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useForm, Controller } from "react-hook-form";
+import { Fragment, useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import Loading from "../../../components/Loading";
+import { selectCurrentUser } from "../../../redux/features/auth/authSlice";
 import { useCreateProductMutation } from "../../../redux/features/Vendor Management/VendorProduct";
 import { useGetMyShopQuery } from "../../../redux/features/Vendor Management/VendorShop";
 import { useAppSelector } from "../../../redux/hook";
-import { selectCurrentUser } from "../../../redux/features/auth/authSlice";
+import { Product, ShopT } from "../../../Types/interface";
 
-const CreateProductModal = ({ isOpen, onClose }) => {
-  const [selectedImages, setSelectedImages] = useState([
+interface CreateProductModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const CreateProductModal = ({ isOpen, onClose }: CreateProductModalProps) => {
+  const [selectedImages, setSelectedImages] = useState<(File | null)[]>([
     null,
     null,
     null,
@@ -19,78 +26,91 @@ const CreateProductModal = ({ isOpen, onClose }) => {
   const currentUser = useAppSelector(selectCurrentUser);
   const userId = currentUser?.userId || null;
 
-  // Fetch shop data using the query
-  const { data: ShopData, isLoading: isShopLoading } =
-    useGetMyShopQuery(userId);
+  const { data: shopData } = useGetMyShopQuery(userId);
+  const shops = shopData?.data || [];
 
-  // Check if ShopData has data (an array of shops)
-  const shops = ShopData?.data || []; // Use ShopData.data if available, fallback to empty array
-
-  const { register, handleSubmit, control, reset, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
   const [createProduct, { isLoading }] = useCreateProductMutation();
 
-  // Handle image file selection
-  const handleImageChange = (event, index) => {
+  const handleImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const updatedImages = [...selectedImages];
-      updatedImages[index] = file; // Save file for upload
+      updatedImages[index] = file;
       setSelectedImages(updatedImages);
     }
   };
 
-  // Form submission handler
- const onSubmitHandler = async (data) => {
-   if (!selectedImages.some((img) => img)) {
-     toast.error("At least one product image is required.");
-     return;
-   }
+  const handleClose = () => {
+    reset();
+    setSelectedImages([null, null, null, null, null]);
+    onClose();
+  };
 
-   const formData = new FormData();
+  const onSubmitHandler = async (data: Product) => {
+    if (!selectedImages.some((img) => img)) {
+      toast.error("At least one product image is required.");
+      return;
+    }
 
-   // Append all images in the 'images[]' array
-   selectedImages.forEach((img) => {
-     if (img) {
-       formData.append("images", img); // Append all images under the 'images[]' array
-     }
-   });
+    const formData = new FormData();
+    selectedImages.forEach((img) => {
+      if (img) formData.append("images", img);
+    });
 
-   // Append product data as JSON string
-   const productData = {
-     name: data.name,
-     description: data.description,
-     shopId: data.shopId, // Updated to use selected shopId from form data
-     price: parseFloat(data.price),
-     stock: parseInt(data.stock, 10),
-     category: data.category,
-     discountCode: data.discountCode || null,
-     discountPercent: data.discountPercent || null,
-   };
+    const productData = {
+      name: data.name,
+      description: data.description,
+      shopId: data.shopId,
+      price: parseFloat(data.price.toString()),
+      stock: parseInt(data.stock.toString(), 10),
+      category: data.category,
+      discountCode: data.discountCode || null,
+      discountPercent: data.discountPercent
+        ? parseInt(data.discountPercent.toString(), 10)
+        : null,
+    };
 
-   formData.append("data", JSON.stringify(productData)); // Attach product data
+    formData.append("data", JSON.stringify(productData));
 
-   try {
-     // Make the API call with FormData
-     await createProduct(formData).unwrap();
-     toast.success("Product created successfully. Waiting for admin approval.");
-     reset();
-     setSelectedImages([null, null, null, null, null]);
-     onClose();
-   } catch (error) {
-     console.error("Error creating product:", error);
-     toast.error(
-       `Product creation failed: ${error?.data?.message || error.message}`
-     );
-   }
- };
+    try {
+      await createProduct(formData).unwrap();
+      toast.success(
+        "Product created successfully. Waiting for admin approval."
+      );
+      reset();
+      setSelectedImages([null, null, null, null, null]);
+      onClose();
+    } catch (error: any) {
+      console.error("Error creating product:", error);
+      toast.error(
+        `Product creation failed: ${error?.data?.message || error.message}`
+      );
+    }
+  };
 
+  useEffect(() => {
+    return () => {
+      selectedImages.forEach((img) => {
+        if (img) URL.revokeObjectURL(URL.createObjectURL(img));
+      });
+    };
+  }, [selectedImages]);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 z-50 overflow-y-auto"
-        onClose={onClose}>
+        onClose={handleClose}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
@@ -118,6 +138,12 @@ const CreateProductModal = ({ isOpen, onClose }) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95">
             <div className="inline-block w-full max-w-2xl p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+              {isLoading && (
+                <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center">
+                  <Loading />
+                </div>
+              )}
+
               <div className="flex justify-between items-center mb-4">
                 <Dialog.Title
                   as="h3"
@@ -125,7 +151,7 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                   Create New Product
                 </Dialog.Title>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="text-gray-400 hover:text-gray-500">
                   <XMarkIcon className="w-6 h-6" />
                 </button>
@@ -134,7 +160,6 @@ const CreateProductModal = ({ isOpen, onClose }) => {
               <form
                 onSubmit={handleSubmit(onSubmitHandler)}
                 className="space-y-4">
-                {/* Image Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Product Images (Max 5)
@@ -166,7 +191,6 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
-                {/* Product Details */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
@@ -177,9 +201,16 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                       {...register("name", {
                         required: "Product name is required.",
                       })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm ${
+                        errors.name ? "border-red-500" : "focus:border-blue-500"
+                      }`}
                       placeholder="Product name"
                     />
+                    {errors.name && (
+                      <p className="text-red-500 text-sm">
+                        {errors.name.message}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
@@ -189,9 +220,18 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                       type="number"
                       step="0.01"
                       {...register("price", { required: "Price is required." })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm ${
+                        errors.price
+                          ? "border-red-500"
+                          : "focus:border-blue-500"
+                      }`}
                       placeholder="0.00"
                     />
+                    {errors.price && (
+                      <p className="text-red-500 text-sm">
+                        {errors.price.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -204,9 +244,18 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                     {...register("description", {
                       required: "Description is required.",
                     })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm ${
+                      errors.description
+                        ? "border-red-500"
+                        : "focus:border-blue-500"
+                    }`}
                     placeholder="Product description"
                   />
+                  {errors.description && (
+                    <p className="text-red-500 text-sm">
+                      {errors.description.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -217,9 +266,18 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                     <input
                       type="number"
                       {...register("stock", { required: "Stock is required." })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm ${
+                        errors.stock
+                          ? "border-red-500"
+                          : "focus:border-blue-500"
+                      }`}
                       placeholder="Available quantity"
                     />
+                    {errors.stock && (
+                      <p className="text-red-500 text-sm">
+                        {errors.stock.message}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
@@ -229,16 +287,24 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                       {...register("category", {
                         required: "Category is required.",
                       })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                      className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm ${
+                        errors.category
+                          ? "border-red-500"
+                          : "focus:border-blue-500"
+                      }`}>
                       <option value="">Select category</option>
                       <option value="electronics">Electronics</option>
                       <option value="clothing">Clothing</option>
                       <option value="books">Books</option>
                     </select>
+                    {errors.category && (
+                      <p className="text-red-500 text-sm">
+                        {errors.category.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
-                {/* Shop Selection */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Select Shop
@@ -247,17 +313,23 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                     {...register("shopId", {
                       required: "Shop selection is required.",
                     })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm ${
+                      errors.shopId ? "border-red-500" : "focus:border-blue-500"
+                    }`}>
                     <option value="">Select Shop</option>
-                    {shops.map((shop) => (
+                    {shops.map((shop: ShopT) => (
                       <option key={shop.shopId} value={shop.shopId}>
                         {shop.name}
                       </option>
                     ))}
                   </select>
+                  {errors.shopId && (
+                    <p className="text-red-500 text-sm">
+                      {errors.shopId.message}
+                    </p>
+                  )}
                 </div>
 
-                {/* Optional Discount Fields */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
@@ -287,14 +359,17 @@ const CreateProductModal = ({ isOpen, onClose }) => {
                 <div className="flex justify-end space-x-3 mt-6">
                   <button
                     type="button"
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors">
-                    Create Product
+                    disabled={isLoading}
+                    className={`px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors ${
+                      isLoading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}>
+                    {isLoading ? "Creating..." : "Create Product"}
                   </button>
                 </div>
               </form>

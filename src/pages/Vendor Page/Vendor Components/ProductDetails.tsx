@@ -44,6 +44,19 @@ const initialProducts = [
     rating: 4.2,
     reviewCount: 16,
   },
+  {
+    id: 3,
+    name: "Medium Stuff Satchel",
+    href: "#",
+    price: "$220",
+    availability: "Blue",
+    imageSrc:
+      "https://plus.unsplash.com/premium_photo-1664392147011-2a720f214e01?q=80&w=1778&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    imageAlt: "gg",
+    category: "Bags",
+    rating: 4.2,
+    reviewCount: 16,
+  },
 ];
 
 const ProductCard = ({ product }) => {
@@ -163,7 +176,7 @@ export default function ProductDetails() {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
