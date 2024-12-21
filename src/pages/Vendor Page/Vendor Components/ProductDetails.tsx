@@ -2,15 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetAllProductWithSearchQuery } from "../../../redux/features/Vendor Management/VendorProduct";
 import Loading from "../../../components/Loading";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Copy } from "lucide-react";
 import CreateProductModal from "./CreateProductModal";
+import DuplicateProductCreateModal from "./DuplicateProductCreateModal";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onDuplicate }) => {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
 
   const handleQuickView = () => {
-    navigate(`/vendor/product/${product.productId}`);
+    navigate(`/vendor/Products/${product.productId}`);
   };
 
   return (
@@ -53,6 +54,13 @@ const ProductCard = ({ product }) => {
           </p>
         )}
         <p className="mt-2 text-sm text-gray-500">Stock: {product.stock}</p>
+        {/* Add Duplicate Button */}
+        <button
+          onClick={() => onDuplicate(product.productId)}
+          className="mt-4 inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+          <Copy className="w-5 h-5 mr-2" />
+          Duplicate Product
+        </button>
       </div>
     </div>
   );
@@ -70,9 +78,21 @@ export default function ProductDetails() {
     sort,
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // Modal state for creating a product
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false); // Modal state for duplicating a product
+  const [selectedProductId, setSelectedProductId] = useState(null); // Store productId for duplication
+
+  const openCreateModal = () => setIsCreateModalOpen(true);
+  const closeCreateModal = () => setIsCreateModalOpen(false);
+
+  const openDuplicateModal = (productId) => {
+    setSelectedProductId(productId);
+    setIsDuplicateModalOpen(true);
+  };
+  const closeDuplicateModal = () => {
+    setSelectedProductId(null);
+    setIsDuplicateModalOpen(false);
+  };
 
   if (isLoading) return <Loading />;
   if (isError)
@@ -99,7 +119,7 @@ export default function ProductDetails() {
             </p>
           </div>
           <button
-            onClick={openModal}
+            onClick={openCreateModal}
             className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             <Plus className="w-5 h-5 mr-2" />
             Create Product
@@ -131,7 +151,11 @@ export default function ProductDetails() {
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <ProductCard key={product.productId} product={product} />
+            <ProductCard
+              key={product.productId}
+              product={product}
+              onDuplicate={openDuplicateModal}
+            />
           ))}
         </div>
 
@@ -153,7 +177,17 @@ export default function ProductDetails() {
       </div>
 
       {/* Create Product Modal */}
-      <CreateProductModal isOpen={isModalOpen} onClose={closeModal} />
+      <CreateProductModal
+        isOpen={isCreateModalOpen}
+        onClose={closeCreateModal}
+      />
+
+      {/* Duplicate Product Modal */}
+      <DuplicateProductCreateModal
+        isOpen={isDuplicateModalOpen}
+        onClose={closeDuplicateModal}
+        productId={selectedProductId}
+      />
     </div>
   );
 }

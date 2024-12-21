@@ -1,11 +1,7 @@
-
 import MyShopLayout from "../pages/Vendor Page/MyShopLayout";
 import ProductsLayout from "../pages/Vendor Page/ProductsLayout";
 import SingleProductView from "../pages/Vendor Page/Vendor Components/SingleProductView";
-
-
 import VendorHome from "../pages/Vendor Page/VendorHome";
-
 
 export const vendorPaths = [
   {
@@ -21,7 +17,7 @@ export const vendorPaths = [
     element: <ProductsLayout />,
   },
   {
-    path: "Product/:ProductId",
+    path: "Products/:productId",
     element: <SingleProductView />,
   },
 ];
