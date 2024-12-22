@@ -23,37 +23,28 @@ const VendorProductCreateApi = baseApi.injectEndpoints({
 
     // Query to fetch all products with a search term and sorting
     getAllProductWithSearch: builder.query({
-      query: ({
-        searchTerm,
-        skip = 0,
-        limit = 10,
-        sort = "newest",
-        fields,
-      }) => {
-        // Map sort options to the backend-compatible sorting criteria
-        let sortCriteria;
-        if (sort === "price_asc") {
-          sortCriteria = { price: "asc" };
-        } else if (sort === "price_desc") {
-          sortCriteria = { price: "desc" };
-        } else if (sort === "newest") {
-          sortCriteria = { createdAt: "desc" }; // Assuming `createdAt` is the field for newest products
-        }
+      query: ({ searchTerm = "", skip = 0, limit = 12, sort = "newest" }) => {
+        const sortCriteria =
+          sort === "price_asc"
+            ? { price: "asc" }
+            : sort === "price_desc"
+            ? { price: "desc" }
+            : { createdAt: "desc" };
 
         return {
-          url: `/product/allProducts/`, // Correct interpolation for all products endpoint
+          url: `/product/allProducts/`,
           method: "GET",
           params: {
             searchTerm,
             skip,
             limit,
             sort: JSON.stringify(sortCriteria),
-            fields: fields ? fields.join(",") : undefined,
           },
         };
       },
-      providesTags: ["Products"], // Cache tag for products
+      providesTags: ["Products"], // For automatic cache updates
     }),
+
     getSingleProduct: builder.query({
       query: (id) => ({
         url: `/product/getProduct/${id}`, // Backend endpoint to get a single product by ID
