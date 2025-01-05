@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:4001/api/v1",
+  baseUrl: "https://best-buy-mart-backend-5cceda1dad93.herokuapp.com/api/v1",
   credentials: "include",
 
   prepareHeaders: (headers, { getState }) => {
@@ -17,6 +17,6 @@ const baseQuery = fetchBaseQuery({
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQuery,
-  tagTypes: ["MyShop", "Products"],
+  tagTypes: ["MyShop", "Products", "User"],
   endpoints: () => ({}),
 });

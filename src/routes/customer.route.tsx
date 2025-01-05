@@ -1,12 +1,20 @@
-import Customer from "../pages/Customer Page/Customer";
+import AddressLayout from "../pages/Customer Page/AddressLayout";
+
+import OrderLayout from "../pages/Customer Page/Customer Components/OrderLayout";
 
 export const customerPath = [
-  {
-    index: true,
-    element: <Customer></Customer>,
-  },
+  
   {
     path: "dashboard",
-    element: <Customer></Customer>,
+    element: <h1>dashboard</h1>,
   },
+  
+  {
+    path: "Address",
+    element: <AddressLayout></AddressLayout>,
+  },
+  {
+    path: "Orders",
+    element:<OrderLayout></OrderLayout>
+  }
 ];

@@ -24,24 +24,37 @@ export default function Login() {
   const [login, { isLoading }] = authApi.useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit = async (data: LoginFormInputs) => {
-    try {
-      const res = await login(data).unwrap();
-      const user = verifyToken(res.token) as TUser;
+const onSubmit = async (data: LoginFormInputs) => {
+  try {
+    // Attempt login and get the response
+    const res = await login(data).unwrap();
 
-      if (user) {
-        dispatch(setUser({ user, token: res.token }));
-        navigate(`/${user.role.toLowerCase()}`);
-        toast.success(`Welcome back, ${user.name}!`);
+    // Verify the token and get user data
+    const user = verifyToken(res.token) as TUser;
+
+    if (user) {
+      // Dispatch the user and token to the state
+      dispatch(setUser({ user, token: res.token }));
+
+      // Redirect based on user role
+      if (user.role === "USER") {
+        navigate("/"); // Redirect 'USER' role to the dashboard
       } else {
-        throw new Error("Invalid user data.");
+        navigate(`/${user.role.toLowerCase()}`); // Handle other roles
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.data?.message || "An error occurred. Please try again.";
-      toast.error(errorMessage);
+
+      // Display a welcome message
+      toast.success(`Welcome back, ${user.name}!`);
+    } else {
+      throw new Error("Invalid user data.");
     }
-  };
+  } catch (error: any) {
+    const errorMessage =
+      error?.data?.message || "An error occurred. Please try again.";
+    toast.error(errorMessage);
+  }
+};
+
 
   return isLoading ? (
     <div className="flex justify-center items-center h-screen bg-gray-50">

@@ -43,3 +43,15 @@ export interface Product {
   discountCode?: string; // Optional field
   discountPercent?: number; // Optional field
 }
+
+
+export interface Product {
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  overview: string;
+  image: string;
+}

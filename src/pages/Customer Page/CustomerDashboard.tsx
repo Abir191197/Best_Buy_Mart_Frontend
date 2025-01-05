@@ -3,10 +3,9 @@ import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   BellIcon,
-  CalendarIcon,
-  ChartPieIcon,
+ 
   Cog6ToothIcon,
-  DocumentDuplicateIcon,
+ 
   FolderIcon,
   HomeIcon,
   UsersIcon,
@@ -19,36 +18,45 @@ import { logout, selectCurrentUser } from "../../redux/features/auth/authSlice";
 import { useAppSelector } from "../../redux/hook";
 
 const navigation = [
-  { name: "Dashboard", href: "/vendor", icon: HomeIcon, current: true },
-  { name: "My Shop", href: "/vendor/MyShop", icon: UsersIcon, current: false },
+  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
+  { name: "Order", href: "/orders", icon: UsersIcon, current: false },
   {
-    name: "Products",
-    href: "/vendor/Products",
+    name: "Followed Shop",
+    href: "/FollowedShop",
     icon: FolderIcon,
     current: false,
   },
-
   {
-    name: "Orders",
-    href: "/vendor/Orders",
-    icon: DocumentDuplicateIcon,
+    name: "Wishlist",
+    href: "/wishlist",
+    icon: FolderIcon,
     current: false,
   },
-
   {
-    name: "Profile",
-    href: "/vendor/Profile",
-    icon: ChartPieIcon,
+    name: "Compare",
+    href: "/compare",
+    icon: FolderIcon,
     current: false,
   },
-  { name: "", href: "#", icon: CalendarIcon, current: false },
+  {
+    name: "Address",
+    href: "/Address",
+    icon: FolderIcon,
+    current: false,
+  },
+  {
+    name: "Products",
+    href: "/products",
+    icon: FolderIcon,
+    current: false,
+  },
 ];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function VendorDashboard() {
+export default function CustomerDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const currentUser = useAppSelector(selectCurrentUser);
   const userName = currentUser?.name || null;

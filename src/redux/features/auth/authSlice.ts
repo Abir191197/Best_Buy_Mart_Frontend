@@ -3,12 +3,11 @@ import { RootState } from "../../store";
 import { ReactNode } from "react";
 
 export type TUser = {
-
- 
   userId: ReactNode;
   name: ReactNode;
   email: string;
   role: string;
+  profileImgSrc: string;
   iat: string;
   exp: string;
 };
@@ -37,6 +36,8 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
   },
 });

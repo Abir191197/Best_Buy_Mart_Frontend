@@ -18,11 +18,13 @@ import { vendorPaths } from "./vendor.route";
 import OTPVerification from "../pages/Auth Page/OtpVerification";
 import Register from "../pages/Auth Page/Register";
 import Login from "../pages/Auth Page/Login";
+import LandingLayout from "../pages/Landing Page/LandingLayout";
+import AllProductLayout from "../pages/Customer Page/AllProductLayout";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <h1>home</h1>,
+    element: <LandingLayout></LandingLayout>,
     errorElement: <NotFoundPage></NotFoundPage>,
   },
   {
@@ -45,6 +47,11 @@ const router = createBrowserRouter([
     element: <VendorRegister></VendorRegister>,
     errorElement: <NotFoundPage></NotFoundPage>,
   },
+  {
+    path: "/products",
+    element: <AllProductLayout></AllProductLayout>,
+    errorElement: <NotFoundPage></NotFoundPage>,
+  },
 
   {
     path: "/admin",
@@ -58,7 +65,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/user",
+    path: "/",
 
     element: (
       <ProtectedRoute role="USER">

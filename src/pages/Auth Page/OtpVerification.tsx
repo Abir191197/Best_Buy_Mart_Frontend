@@ -34,7 +34,7 @@ const navigate = useNavigate();
       // Redirect to the user /vendor page page
       const routeRedirect = verifyToken(response.token);
       if (routeRedirect?.role === "USER") {
-        navigate("/user");
+        navigate("/");
       } else if (routeRedirect?.role === "VENDOR") {
         navigate("/vendor");
       }

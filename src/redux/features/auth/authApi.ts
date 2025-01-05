@@ -10,6 +10,7 @@ const authApi = baseApi.injectEndpoints({
       }),
       // Ensure this matches with your caching strategy
     }),
+    
   }),
   overrideExisting: false, // Ensures existing endpoints aren't overridden
 });
